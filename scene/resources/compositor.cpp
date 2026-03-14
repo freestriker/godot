@@ -70,6 +70,8 @@ void CompositorEffect::_bind_methods() {
 	BIND_ENUM_CONSTANT(EFFECT_CALLBACK_TYPE_POST_SKY)
 	BIND_ENUM_CONSTANT(EFFECT_CALLBACK_TYPE_PRE_TRANSPARENT)
 	BIND_ENUM_CONSTANT(EFFECT_CALLBACK_TYPE_POST_TRANSPARENT)
+	BIND_ENUM_CONSTANT(EFFECT_CALLBACK_TYPE_TEMPORAL_SCALING)
+	BIND_ENUM_CONSTANT(EFFECT_CALLBACK_TYPE_SPATIAL_SCALING)
 	BIND_ENUM_CONSTANT(EFFECT_CALLBACK_TYPE_MAX)
 
 	GDVIRTUAL_BIND(_render_callback, "effect_callback_type", "render_data");
@@ -77,14 +79,23 @@ void CompositorEffect::_bind_methods() {
 
 void CompositorEffect::_validate_property(PropertyInfo &p_property) const {
 	if (p_property.name == "access_resolved_color") {
-		if (effect_callback_type == EFFECT_CALLBACK_TYPE_POST_TRANSPARENT) {
+		if (effect_callback_type == EFFECT_CALLBACK_TYPE_POST_TRANSPARENT || effect_callback_type == EFFECT_CALLBACK_TYPE_TEMPORAL_SCALING || effect_callback_type == EFFECT_CALLBACK_TYPE_SPATIAL_SCALING) {
 			p_property.usage = PROPERTY_USAGE_NONE;
 		}
 	} else if (p_property.name == "access_resolved_depth") {
-		if (effect_callback_type == EFFECT_CALLBACK_TYPE_POST_TRANSPARENT) {
+		if (effect_callback_type == EFFECT_CALLBACK_TYPE_POST_TRANSPARENT || effect_callback_type == EFFECT_CALLBACK_TYPE_TEMPORAL_SCALING || effect_callback_type == EFFECT_CALLBACK_TYPE_SPATIAL_SCALING) {
 			p_property.usage = PROPERTY_USAGE_NONE;
 		}
-	} else if (p_property.name == "needs_separate_specular") {
+	} else if (p_property.name == "needs_motion_vectors") {
+		if (effect_callback_type == EFFECT_CALLBACK_TYPE_TEMPORAL_SCALING || effect_callback_type == EFFECT_CALLBACK_TYPE_SPATIAL_SCALING) {
+			p_property.usage = PROPERTY_USAGE_NONE;
+		}
+	} else if (p_property.name == "needs_normal_roughness") {
+		if (effect_callback_type == EFFECT_CALLBACK_TYPE_TEMPORAL_SCALING || effect_callback_type == EFFECT_CALLBACK_TYPE_SPATIAL_SCALING) {
+			p_property.usage = PROPERTY_USAGE_NONE;
+		}
+	}
+	else if (p_property.name == "needs_separate_specular") {
 		if (effect_callback_type != EFFECT_CALLBACK_TYPE_POST_SKY) {
 			p_property.usage = PROPERTY_USAGE_NONE;
 		}

@@ -35,6 +35,14 @@
 #include "servers/rendering/renderer_rd/storage_rd/texture_storage.h"
 #include "servers/rendering/rendering_server_globals.h"
 
+Vector2 RenderSceneDataRD::get_taa_jitter() const {
+	return taa_jitter;
+}
+
+Vector2 RenderSceneDataRD::get_prev_taa_jitter() const {
+	return prev_taa_jitter;
+}
+
 Transform3D RenderSceneDataRD::get_cam_transform() const {
 	return cam_transform;
 }
@@ -45,6 +53,26 @@ Projection RenderSceneDataRD::get_cam_projection() const {
 	correction.add_jitter_offset(taa_jitter);
 
 	return correction * cam_projection;
+}
+
+Projection RenderSceneDataRD::get_cam_projection_uncorrection() const {
+	return cam_projection;
+}
+
+Transform3D RenderSceneDataRD::get_prev_cam_transform() const {
+	return prev_cam_transform;
+}
+
+Projection RenderSceneDataRD::get_prev_cam_projection() const {
+	Projection correction;
+	correction.set_depth_correction(flip_y);
+	correction.add_jitter_offset(prev_taa_jitter);
+
+	return correction * prev_cam_projection;
+}
+
+Projection RenderSceneDataRD::get_prev_cam_projection_uncorrection() const {
+	return prev_cam_projection;
 }
 
 uint32_t RenderSceneDataRD::get_view_count() const {

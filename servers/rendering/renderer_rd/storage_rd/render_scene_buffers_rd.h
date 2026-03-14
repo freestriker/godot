@@ -90,6 +90,7 @@ private:
 	// Aliasing settings
 	RSE::ViewportMSAA msaa_3d = RSE::VIEWPORT_MSAA_DISABLED;
 	RSE::ViewportScreenSpaceAA screen_space_aa = RSE::VIEWPORT_SCREEN_SPACE_AA_DISABLED;
+	uint32_t jitter_phase_count = 0;
 	bool use_taa = false;
 	bool use_debanding = false;
 	RD::TextureSamples texture_samples = RD::TEXTURE_SAMPLES_1;
@@ -174,6 +175,11 @@ private:
 
 	void update_samplers();
 
+	StringName compositor_spatial_scaling_color_texture_context;
+	StringName compositor_spatial_scaling_color_texture_name;
+	RID compositor_spatial_scaling_render_target;
+	RID compositor_temporal_scaling_exposure_texture;
+
 protected:
 	static void _bind_methods();
 
@@ -240,6 +246,7 @@ public:
 	_FORCE_INLINE_ RD::TextureSamples get_texture_samples() const { return texture_samples; }
 	_FORCE_INLINE_ RSE::ViewportScreenSpaceAA get_screen_space_aa() const { return screen_space_aa; }
 	_FORCE_INLINE_ bool get_use_taa() const { return use_taa; }
+	_FORCE_INLINE_ uint32_t get_jitter_phase_count() const { return jitter_phase_count; }
 	_FORCE_INLINE_ bool get_use_debanding() const { return use_debanding; }
 
 	uint64_t get_auto_exposure_version() const { return auto_exposure_version; }
@@ -315,6 +322,39 @@ public:
 	RID get_velocity_buffer(bool p_get_msaa, uint32_t p_layer);
 
 	RID get_velocity_depth_buffer();
+
+	// Compositor spatial scaling
+	_FORCE_INLINE_ void set_compositor_spatial_scaling_color_texture_context_name(const StringName &p_context, const StringName &p_texture_name) {
+		compositor_spatial_scaling_color_texture_context = p_context;
+		compositor_spatial_scaling_color_texture_name = p_texture_name;
+	}
+	_FORCE_INLINE_ void set_compositor_spatial_scaling_render_target(const RID p_render_target) {
+		compositor_spatial_scaling_render_target = p_render_target;
+	}
+	_FORCE_INLINE_ RID get_compositor_spatial_scaling_color_layer(const uint32_t p_layer) {
+		return get_texture_slice(compositor_spatial_scaling_color_texture_context, compositor_spatial_scaling_color_texture_name, p_layer, 0);
+	}
+	RID get_compositor_spatial_scaling_upscaled_layer(const uint32_t p_layer);
+
+	// Compositor temporal scaling
+	_FORCE_INLINE_ RID get_compositor_temporal_scaling_color_layer(const uint32_t p_layer) {
+		return get_internal_texture(p_layer);
+	}
+	_FORCE_INLINE_ RID get_compositor_temporal_scaling_depth_layer(const uint32_t p_layer) {
+		return get_depth_texture(p_layer);
+	}
+	_FORCE_INLINE_ RID get_compositor_temporal_scaling_velocity_layer(const uint32_t p_layer) {
+		return get_velocity_buffer(false, p_layer);
+	}
+	_FORCE_INLINE_ void set_compositor_temporal_scaling_exposure_layer(const RID p_rid) {
+		compositor_temporal_scaling_exposure_texture = p_rid;
+	}
+	_FORCE_INLINE_ RID get_compositor_temporal_scaling_exposure_layer() const {
+		return compositor_temporal_scaling_exposure_texture;
+	}
+	_FORCE_INLINE_ RID get_compositor_temporal_scaling_upscaled_layer(const uint32_t p_layer) {
+		return get_upscaled_texture(p_layer);
+	}
 
 	// Samplers adjusted with the mipmap bias that is best fit for the configuration of these render buffers.
 

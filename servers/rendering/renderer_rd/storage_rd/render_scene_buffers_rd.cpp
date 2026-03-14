@@ -68,6 +68,17 @@ void RenderSceneBuffersRD::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_velocity_texture", "msaa"), &RenderSceneBuffersRD::_get_velocity_texture, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("get_velocity_layer", "layer", "msaa"), &RenderSceneBuffersRD::_get_velocity_layer, DEFVAL(false));
 
+	// Compositor spatial scaling texture layer.
+	ClassDB::bind_method(D_METHOD("get_compositor_spatial_scaling_color_layer", "layer"), &RenderSceneBuffersRD::get_compositor_spatial_scaling_color_layer);
+	ClassDB::bind_method(D_METHOD("get_compositor_spatial_scaling_upscaled_layer", "layer"), &RenderSceneBuffersRD::get_compositor_spatial_scaling_upscaled_layer);
+
+	// Compositor temporal scaling texture layer.
+	ClassDB::bind_method(D_METHOD("get_compositor_temporal_scaling_color_layer", "layer"), &RenderSceneBuffersRD::get_compositor_temporal_scaling_color_layer);
+	ClassDB::bind_method(D_METHOD("get_compositor_temporal_scaling_depth_layer", "layer"), &RenderSceneBuffersRD::get_compositor_temporal_scaling_depth_layer);
+	ClassDB::bind_method(D_METHOD("get_compositor_temporal_scaling_velocity_layer", "layer"), &RenderSceneBuffersRD::get_compositor_temporal_scaling_velocity_layer);
+	ClassDB::bind_method(D_METHOD("get_compositor_temporal_scaling_exposure_layer"), &RenderSceneBuffersRD::get_compositor_temporal_scaling_exposure_layer);
+	ClassDB::bind_method(D_METHOD("get_compositor_temporal_scaling_upscaled_layer", "layer"), &RenderSceneBuffersRD::get_compositor_temporal_scaling_upscaled_layer);
+
 	// Expose a few properties we're likely to use externally
 	ClassDB::bind_method(D_METHOD("get_render_target"), &RenderSceneBuffersRD::get_render_target);
 	ClassDB::bind_method(D_METHOD("get_view_count"), &RenderSceneBuffersRD::get_view_count);
@@ -79,6 +90,7 @@ void RenderSceneBuffersRD::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_texture_samples"), &RenderSceneBuffersRD::get_texture_samples);
 	ClassDB::bind_method(D_METHOD("get_screen_space_aa"), &RenderSceneBuffersRD::get_screen_space_aa);
 	ClassDB::bind_method(D_METHOD("get_use_taa"), &RenderSceneBuffersRD::get_use_taa);
+	ClassDB::bind_method(D_METHOD("get_jitter_phase_count"), &RenderSceneBuffersRD::get_jitter_phase_count);
 	ClassDB::bind_method(D_METHOD("get_use_debanding"), &RenderSceneBuffersRD::get_use_debanding);
 }
 
@@ -170,6 +182,7 @@ void RenderSceneBuffersRD::configure(const RenderSceneBuffersConfiguration *p_co
 	texture_mipmap_bias = p_config->get_texture_mipmap_bias();
 	anisotropic_filtering_level = p_config->get_anisotropic_filtering_level();
 	use_taa = p_config->get_use_taa();
+	jitter_phase_count = p_config->get_jitter_phase_count();
 	use_debanding = p_config->get_use_debanding();
 
 	ERR_FAIL_COND_MSG(view_count == 0, "Must have at least 1 view");
@@ -716,6 +729,10 @@ RID RenderSceneBuffersRD::get_velocity_depth_buffer() {
 	RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
 	RID velocity_depth = texture_storage->render_target_get_override_velocity_depth(render_target);
 	return velocity_depth;
+}
+
+RID RenderSceneBuffersRD::get_compositor_spatial_scaling_upscaled_layer(const uint32_t p_layer) {
+	return RendererRD::TextureStorage::get_singleton()->render_target_get_rd_texture_slice(compositor_spatial_scaling_render_target, p_layer);
 }
 
 uint32_t RenderSceneBuffersRD::get_color_usage_bits(bool p_resolve, bool p_msaa, bool p_storage) {

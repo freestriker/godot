@@ -50,6 +50,7 @@ private:
 
 	float fsr_sharpness = 0.0;
 	float texture_mipmap_bias = 0.0;
+	uint32_t jitter_phase_count = 0;
 	bool use_taa = false;
 	bool use_debanding = false;
 
@@ -89,6 +90,9 @@ public:
 
 	bool get_use_taa() const { return use_taa; }
 	void set_use_taa(bool p_use_taa) { use_taa = p_use_taa; }
+
+	uint32_t get_jitter_phase_count() const { return jitter_phase_count; }
+	void set_jitter_phase_count(uint32_t p_jitter_phase_count) { jitter_phase_count = p_jitter_phase_count; }
 
 	bool get_use_debanding() const { return use_debanding; }
 	void set_use_debanding(bool p_use_debanding) { use_debanding = p_use_debanding; }

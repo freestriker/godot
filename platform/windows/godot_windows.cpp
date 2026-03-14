@@ -130,6 +130,8 @@ int _main() {
 }
 
 int main(int argc, char **argv) {
+	HMODULE hMod = LoadLibrary("E:\\Software\\RenderDoc\\renderdoc.dll");
+
 	// override the arguments for the test handler / if symbol is provided
 	// TEST_MAIN_OVERRIDE
 

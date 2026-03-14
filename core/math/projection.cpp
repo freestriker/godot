@@ -102,9 +102,9 @@ void Projection::adjust_perspective_znear(real_t p_new_znear) {
 	columns[3][2] = -2 * znear * zfar / deltaZ;
 }
 
-Projection Projection::create_depth_correction(bool p_flip_y) {
+Projection Projection::create_depth_correction(bool p_flip_y, bool p_reverse_z, bool p_remap_z) {
 	Projection proj;
-	proj.set_depth_correction(p_flip_y);
+	proj.set_depth_correction(p_flip_y, p_reverse_z, p_remap_z);
 	return proj;
 }
 

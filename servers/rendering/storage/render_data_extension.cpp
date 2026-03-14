@@ -75,6 +75,18 @@ void RenderSceneDataExtension::_bind_methods() {
 	GDVIRTUAL_BIND(_get_uniform_buffer);
 }
 
+Vector2 RenderSceneDataExtension::get_taa_jitter() const {
+	Vector2 ret;
+	GDVIRTUAL_CALL(_get_taa_jitter, ret);
+	return ret;
+}
+
+Vector2 RenderSceneDataExtension::get_prev_taa_jitter() const {
+	Vector2 ret;
+	GDVIRTUAL_CALL(_get_prev_taa_jitter, ret);
+	return ret;
+}
+
 Transform3D RenderSceneDataExtension::get_cam_transform() const {
 	Transform3D ret;
 	GDVIRTUAL_CALL(_get_cam_transform, ret);
@@ -84,6 +96,30 @@ Transform3D RenderSceneDataExtension::get_cam_transform() const {
 Projection RenderSceneDataExtension::get_cam_projection() const {
 	Projection ret;
 	GDVIRTUAL_CALL(_get_cam_projection, ret);
+	return ret;
+}
+
+Projection RenderSceneDataExtension::get_cam_projection_uncorrection() const {
+	Projection ret;
+	GDVIRTUAL_CALL(_get_cam_projection_uncorrection, ret);
+	return ret;
+}
+
+Transform3D RenderSceneDataExtension::get_prev_cam_transform() const {
+	Transform3D ret;
+	GDVIRTUAL_CALL(_get_prev_cam_transform, ret);
+	return ret;
+}
+
+Projection RenderSceneDataExtension::get_prev_cam_projection() const {
+	Projection ret;
+	GDVIRTUAL_CALL(_get_prev_cam_projection, ret);
+	return ret;
+}
+
+Projection RenderSceneDataExtension::get_prev_cam_projection_uncorrection() const {
+	Projection ret;
+	GDVIRTUAL_CALL(_get_prev_cam_projection_uncorrection, ret);
 	return ret;
 }
 

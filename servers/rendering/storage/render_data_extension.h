@@ -65,8 +65,16 @@ protected:
 	static void _bind_methods();
 
 public:
+	virtual Vector2 get_taa_jitter() const override;
+	virtual Vector2 get_prev_taa_jitter() const override;
+
 	virtual Transform3D get_cam_transform() const override;
 	virtual Projection get_cam_projection() const override;
+	virtual Projection get_cam_projection_uncorrection() const override;
+
+	virtual Transform3D get_prev_cam_transform() const override;
+	virtual Projection get_prev_cam_projection() const override;
+	virtual Projection get_prev_cam_projection_uncorrection() const override;
 
 	virtual uint32_t get_view_count() const override;
 	virtual Vector3 get_view_eye_offset(uint32_t p_view) const override;
@@ -74,8 +82,16 @@ public:
 
 	virtual RID get_uniform_buffer() const override;
 
+	GDVIRTUAL0RC(Vector2, _get_taa_jitter)
+	GDVIRTUAL0RC(Vector2, _get_prev_taa_jitter)
+
 	GDVIRTUAL0RC(Transform3D, _get_cam_transform)
 	GDVIRTUAL0RC(Projection, _get_cam_projection)
+	GDVIRTUAL0RC(Projection, _get_cam_projection_uncorrection)
+
+	GDVIRTUAL0RC(Transform3D, _get_prev_cam_transform)
+	GDVIRTUAL0RC(Projection, _get_prev_cam_projection)
+	GDVIRTUAL0RC(Projection, _get_prev_cam_projection_uncorrection)
 
 	GDVIRTUAL0RC(uint32_t, _get_view_count)
 	GDVIRTUAL1RC(Vector3, _get_view_eye_offset, uint32_t)

@@ -1760,6 +1760,7 @@ void RenderForwardClustered::_render_scene(RenderDataRD *p_render_data, const Co
 		SCALE_NONE,
 		SCALE_FSR2,
 		SCALE_MFX,
+		SCALE_COMPOSITOR,
 	} scale_type = SCALE_NONE;
 
 	switch (rb->get_scaling_3d_mode()) {
@@ -1772,6 +1773,13 @@ void RenderForwardClustered::_render_scene(RenderDataRD *p_render_data, const Co
 #else
 			scale_type = SCALE_NONE;
 #endif
+			break;
+		case RSE::VIEWPORT_SCALING_3D_MODE_COMPOSITOR_TEMPORAL:
+			if (_has_compositor_effect(RSE::COMPOSITOR_EFFECT_CALLBACK_TYPE_TEMPORAL_SCALING, p_render_data)) {
+				scale_type = SCALE_COMPOSITOR;
+			} else {
+				scale_type = SCALE_FSR2;
+			}
 			break;
 		default:
 			break;
@@ -2506,7 +2514,14 @@ void RenderForwardClustered::_render_scene(RenderDataRD *p_render_data, const Co
 
 			RD::get_singleton()->draw_command_end_label();
 #endif
-		} else if (using_taa) {
+		} else if (scale_type == SCALE_COMPOSITOR) {
+			if (RSG::camera_attributes->camera_attributes_uses_auto_exposure(p_render_data->camera_attributes)) {
+				rb->set_compositor_temporal_scaling_exposure_layer(luminance->get_current_luminance_buffer(rb));
+			}
+
+			RENDER_TIMESTAMP("Process Temporal Scaling Compositor Effects");
+			_process_compositor_effects(RSE::COMPOSITOR_EFFECT_CALLBACK_TYPE_TEMPORAL_SCALING, p_render_data);
+		}else if (using_taa) {
 			RD::get_singleton()->draw_command_begin_label("TAA");
 			RENDER_TIMESTAMP("TAA");
 			taa->process(rb, rb->get_base_data_format(), p_render_data->scene_data->z_near, p_render_data->scene_data->z_far);

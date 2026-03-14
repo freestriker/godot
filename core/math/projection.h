@@ -85,7 +85,7 @@ struct [[nodiscard]] Projection {
 	void set_frustum(real_t p_size, real_t p_aspect, Vector2 p_offset, real_t p_near, real_t p_far, bool p_flip_fov = false);
 	void adjust_perspective_znear(real_t p_new_znear);
 
-	static Projection create_depth_correction(bool p_flip_y);
+	static Projection create_depth_correction(bool p_flip_y, bool p_reverse_z = true, bool p_remap_z = true);
 	static Projection create_light_atlas_rect(const Rect2 &p_rect);
 	static Projection create_perspective(real_t p_fovy_degrees, real_t p_aspect, real_t p_z_near, real_t p_z_far, bool p_flip_fov = false);
 	static Projection create_perspective_hmd(real_t p_fovy_degrees, real_t p_aspect, real_t p_z_near, real_t p_z_far, bool p_flip_fov, int p_eye, real_t p_intraocular_dist, real_t p_convergence_dist);

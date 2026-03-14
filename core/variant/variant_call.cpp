@@ -2602,7 +2602,7 @@ static void _register_variant_builtin_methods_misc() {
 
 	/* Projection */
 
-	bind_static_method(Projection, create_depth_correction, sarray("flip_y"), varray());
+	bind_static_method(Projection, create_depth_correction, sarray("flip_y", "reverse_z", "remap_z"), varray(true, true));
 	bind_static_method(Projection, create_light_atlas_rect, sarray("rect"), varray());
 	bind_static_method(Projection, create_perspective, sarray("fovy", "aspect", "z_near", "z_far", "flip_fov"), varray(false));
 	bind_static_method(Projection, create_perspective_hmd, sarray("fovy", "aspect", "z_near", "z_far", "flip_fov", "eye", "intraocular_dist", "convergence_dist"), varray());

@@ -144,7 +144,7 @@ void RendererViewport::_configure_3d_render_buffers(Viewport *p_viewport) {
 			bool upscaler_available = p_viewport->fsr_enabled;
 			RSE::ViewportScaling3DType scaling_type = RSE::scaling_3d_mode_type(scaling_3d_mode);
 
-			if ((!upscaler_available || (scaling_type == RSE::VIEWPORT_SCALING_3D_TYPE_SPATIAL)) && scaling_3d_scale >= (1.0 - EPSILON) && scaling_3d_scale <= (1.0 + EPSILON)) {
+			if ((!upscaler_available || (scaling_type == RSE::VIEWPORT_SCALING_3D_TYPE_SPATIAL && scaling_3d_mode != RSE::VIEWPORT_SCALING_3D_MODE_COMPOSITOR_SPATIAL)) && scaling_3d_scale >= (1.0 - EPSILON) && scaling_3d_scale <= (1.0 + EPSILON)) {
 				// No 3D scaling for spatial modes? Ignore scaling mode, this just introduces overhead.
 				// - Mobile can't perform optimal path
 				// - FSR does an extra pass (or 2 extra passes if 2D-MSAA is enabled)
@@ -234,6 +234,8 @@ void RendererViewport::_configure_3d_render_buffers(Viewport *p_viewport) {
 					break;
 				case RSE::VIEWPORT_SCALING_3D_MODE_METALFX_SPATIAL:
 				case RSE::VIEWPORT_SCALING_3D_MODE_METALFX_TEMPORAL:
+				case RSE::VIEWPORT_SCALING_3D_MODE_COMPOSITOR_SPATIAL:
+				case RSE::VIEWPORT_SCALING_3D_MODE_COMPOSITOR_TEMPORAL:
 				case RSE::VIEWPORT_SCALING_3D_MODE_FSR:
 				case RSE::VIEWPORT_SCALING_3D_MODE_FSR2:
 					target_width = p_viewport->size.width;
@@ -289,6 +291,7 @@ void RendererViewport::_configure_3d_render_buffers(Viewport *p_viewport) {
 			rb_config.set_anisotropic_filtering_level(p_viewport->anisotropic_filtering_level);
 			rb_config.set_use_taa(use_taa);
 			rb_config.set_use_debanding(p_viewport->use_debanding);
+			rb_config.set_jitter_phase_count(p_viewport->jitter_phase_count);
 
 			p_viewport->render_buffers->configure(&rb_config);
 		}
@@ -1018,6 +1021,12 @@ void RendererViewport::viewport_set_scaling_3d_mode(RID p_viewport, RSE::Viewpor
 		}
 		if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_METALFX_TEMPORAL) {
 			WARN_PRINT_ONCE_ED("MetalFX Temporal 3D scaling is only available when using the Forward+ renderer.");
+		}
+		if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_COMPOSITOR_SPATIAL) {
+			WARN_PRINT_ONCE_ED("Compositor Spatial Scaling is only available when using the Forward+ renderer.");
+		}
+		if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_COMPOSITOR_TEMPORAL) {
+			WARN_PRINT_ONCE_ED("Compositor Temporal Scaling is only available when using the Forward+ renderer.");
 		}
 	}
 	if (rendering_method == "gl_compatibility" && p_mode == RSE::VIEWPORT_SCALING_3D_MODE_METALFX_SPATIAL) {

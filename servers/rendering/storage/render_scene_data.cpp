@@ -33,8 +33,16 @@
 #include "core/object/class_db.h"
 
 void RenderSceneData::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_taa_jitter"), &RenderSceneData::get_taa_jitter);
+	ClassDB::bind_method(D_METHOD("get_prev_taa_jitter"), &RenderSceneData::get_prev_taa_jitter);
+
 	ClassDB::bind_method(D_METHOD("get_cam_transform"), &RenderSceneData::get_cam_transform);
 	ClassDB::bind_method(D_METHOD("get_cam_projection"), &RenderSceneData::get_cam_projection);
+	ClassDB::bind_method(D_METHOD("get_cam_projection_uncorrection"), &RenderSceneData::get_cam_projection_uncorrection);
+
+	ClassDB::bind_method(D_METHOD("get_prev_cam_transform"), &RenderSceneData::get_prev_cam_transform);
+	ClassDB::bind_method(D_METHOD("get_prev_cam_projection"), &RenderSceneData::get_prev_cam_projection);
+	ClassDB::bind_method(D_METHOD("get_prev_cam_projection_uncorrection"), &RenderSceneData::get_prev_cam_projection_uncorrection);
 
 	ClassDB::bind_method(D_METHOD("get_view_count"), &RenderSceneData::get_view_count);
 	ClassDB::bind_method(D_METHOD("get_view_eye_offset", "view"), &RenderSceneData::get_view_eye_offset);
